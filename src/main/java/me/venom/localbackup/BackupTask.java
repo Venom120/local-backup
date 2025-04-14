@@ -43,6 +43,7 @@ public class BackupTask implements Runnable {
                     Files.copy(source, backupBase.toPath().resolve(source.getFileName()), StandardCopyOption.REPLACE_EXISTING);
                 }
             }
+            plugin.setLastBackupTime(Instant.now());
 
         } catch (IOException e) {
             plugin.getLogger().warning("Backup failed: " + e.getMessage());

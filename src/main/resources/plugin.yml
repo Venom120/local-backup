@@ -3,3 +3,14 @@ version: 1.0
 main: me.venom.localbackup.VenomBackup
 api-version: 1.21
 description: Backup selected folders/files when server shuts down or at intervals
+
+commands:
+  backup:
+    description: venom-local-backup control commands
+    usage: /backup <now|last|reload|status>
+    permission: venom.backup
+
+permissions:
+  venom.backup:
+    description: Allows use of /backup commands
+    default: op
