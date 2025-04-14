@@ -1,0 +1,5 @@
+name: venom-local-backup
+version: 1.0
+main: me.venom.localbackup.VenomBackup
+api-version: 1.21
+description: Backup selected folders/files when server shuts down or at intervals

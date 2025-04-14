@@ -1,0 +1,11 @@
+backup:
+  delay_minutes: 60
+  destination: "backups"
+  folders:
+    - "world"
+    - "world_nether"
+    - "world_the_end"
+    - "plugins"
+  files:
+    - "server.properties"
+    - "eula.txt"
