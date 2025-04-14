@@ -1,6 +1,12 @@
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
+import java.util.logging.Logger;
+import me.venom.localbackup.BackupTask;
+import me.venom.localbackup.BackupCommandTabCompleter;
+
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -25,26 +31,23 @@ public class VenomBackup extends JavaPlugin {
         config = getConfig();
 
         int delayMinutes = config.getInt("backup.delay_minutes", 30);
-        long delayTicks = 20L * 60 * delayMinutes;
-
-        this.backupTask = new BackupTask(this);
-        getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
-            backupTask.run();
-            lastBackupTime = Instant.now();
-        }, delayTicks, delayTicks);
-        getCommand("backup").setTabCompleter(new BackupCommandTabCompleter());
-
         backupIntervalTicks = 20L * 60 * delayMinutes;
+
         this.backupTask = new BackupTask(this);
+
         getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
             backupTask.run();
             lastBackupTime = Instant.now();
             nextBackupTick = getServer().getCurrentTick() + backupIntervalTicks;
         }, backupIntervalTicks, backupIntervalTicks);
+
         nextBackupTick = getServer().getCurrentTick() + backupIntervalTicks;
+
+        getCommand("backup").setTabCompleter(new BackupCommandTabCompleter());
 
         log.info("venom-local-backup enabled. Backups every " + delayMinutes + " minutes.");
     }
+
 
     @Override
     public void onDisable() {
