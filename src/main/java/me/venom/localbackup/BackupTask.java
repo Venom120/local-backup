@@ -8,6 +8,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.Comparator;
+
 
 public class BackupTask implements Runnable {
 
@@ -45,6 +48,26 @@ public class BackupTask implements Runnable {
                 }
             }
             plugin.setLastBackupTime(Instant.now());
+            // Enforce max backup copies
+            int maxCopies = config.getInt("backup.max_copies", 3);
+            File backupRoot = new File(plugin.getDataFolder().getParentFile().getParent(), backupDir);
+            File[] backupDirs = backupRoot.listFiles(File::isDirectory);
+
+            if (backupDirs != null && backupDirs.length > maxCopies) {
+                // Sort by last modified (oldest first)
+                Arrays.sort(backupDirs, Comparator.comparingLong(File::lastModified));
+                int toDelete = backupDirs.length - maxCopies;
+
+                for (int i = 0; i < toDelete; i++) {
+                    try {
+                        FileUtils.deleteDirectory(backupDirs[i]);
+                        plugin.getLogger().info("Deleted old backup: " + backupDirs[i].getName());
+                    } catch (IOException e) {
+                        plugin.getLogger().warning("Failed to delete old backup: " + backupDirs[i].getName() + " -> " + e.getMessage());
+                    }
+                }
+            }
+
 
         } catch (IOException e) {
             plugin.getLogger().warning("Backup failed: " + e.getMessage());

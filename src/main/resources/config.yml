@@ -1,5 +1,7 @@
 backup:
   delay_minutes: 60
+  max_copies: 3
+
   destination: "backups"
   folders:
     - "world"
